@@ -1,22 +1,22 @@
 package ru.geekbrains.popularlibs.mvp.presenter
 
-import ru.geekbrains.popularlibs.mvp.model.CountersModel
+import moxy.InjectViewState
+import moxy.MvpPresenter
 import ru.geekbrains.popularlibs.mvp.view.MainView
+import ru.geekbrains.popularlibs.navigation.Screens
+import ru.terrakok.cicerone.Router
 
-class MainPresenter(val view: MainView, val model: CountersModel){
+@InjectViewState
+class MainPresenter(val router: Router) : MvpPresenter<MainView>() {
 
-    fun firstCounterClick(){
-        val nextValue = model.next(0)
-        view.setFistButtonText(nextValue.toString())
+    override fun onFirstViewAttach() {
+        super.onFirstViewAttach()
+        viewState.init()
+        router.replaceScreen(Screens.RepositoriesScreen())
     }
 
-    fun secondCounterClick(){
-        val nextValue = model.next(1)
-        view.setSecondButtonText(nextValue.toString())
+    fun backClicked() {
+        router.exit()
     }
 
-    fun thirdCounterClick(){
-        val nextValue = model.next(2)
-        view.setThirdButtonText(nextValue.toString())
-    }
 }
