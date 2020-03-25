@@ -3,7 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:gravity="center_horizontal">
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -16,7 +17,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="4dp"
-            tools:text="Id:" />
+            tools:text="@string/id" />
 
         <TextView
             android:id="@+id/rep_id_value"
@@ -36,8 +37,8 @@
             android:id="@+id/rep_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            tools:text="Name:" />
+            android:layout_marginEnd="4dp"
+            tools:text="@string/name" />
 
         <TextView
             android:id="@+id/rep_name_value"
@@ -58,7 +59,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="4dp"
-            tools:text="Forks count:" />
+            tools:text="@string/forks_count" />
 
         <TextView
             android:id="@+id/rep_forks_count_value"
