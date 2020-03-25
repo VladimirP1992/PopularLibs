@@ -19,19 +19,12 @@ class RepositoryFragment : MvpAppCompatFragment(), RepositoryView, BackButtonLis
 
     companion object {
         private const val ARGS_REPOSITORY  = "argsRepository"
-        fun newInstance(repository : GithubRepository) : RepositoryFragment{
-            val fragment = RepositoryFragment()
-
-            val args = Bundle()
-            args.putSerializable(ARGS_REPOSITORY, repository);
-
-            fragment.arguments = args
-
-            return fragment
+        fun newInstance(repository: GithubRepository) = RepositoryFragment().apply {
+            arguments = Bundle().apply {
+                putParcelable(ARGS_REPOSITORY, repository)
+            }
         }
     }
-
-    lateinit var repository: GithubRepository
 
     @InjectPresenter
     lateinit var presenter: RepositoryPresenter
@@ -40,22 +33,23 @@ class RepositoryFragment : MvpAppCompatFragment(), RepositoryView, BackButtonLis
         View.inflate(context, R.layout.fragment_repository, null)
 
     @ProvidePresenter
-    fun providePresenter(){
-
-        val repository = arguments?.getSerializable(ARGS_REPOSITORY) as GithubRepository
-
-        RepositoryPresenter(repository, App.instance.getRouter())
+    fun providePresenter():RepositoryPresenter{
+        val repository = arguments!![ARGS_REPOSITORY] as GithubRepository
+        return RepositoryPresenter(repository, App.instance.getRouter())
     }
 
     override fun setRepoId(id: String) {
+        rep_id.text = getString(R.string.id)
         rep_id_value.text = id
     }
 
     override fun setRepoName(name: String) {
+        rep_name.text = getString(R.string.name)
         rep_name_value.text = name
     }
 
     override fun setRepoForksCount(forksCount: String) {
+        rep_forks_count.text = getString(R.string.forks_count)
         rep_forks_count_value.text = forksCount
     }
 
