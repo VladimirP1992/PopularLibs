@@ -3,4 +3,5 @@
     <string name="id">Id:</string>
     <string name="name">Name:</string>
     <string name="forks_count">Forks count:</string>
+    <string name="error_repositories_update">Can\'t update repositories!</string>
 </resources>
