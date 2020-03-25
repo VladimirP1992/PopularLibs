@@ -39,17 +39,14 @@ class RepositoryFragment : MvpAppCompatFragment(), RepositoryView, BackButtonLis
     }
 
     override fun setRepoId(id: String) {
-        rep_id.text = getString(R.string.id)
         rep_id_value.text = id
     }
 
     override fun setRepoName(name: String) {
-        rep_name.text = getString(R.string.name)
         rep_name_value.text = name
     }
 
     override fun setRepoForksCount(forksCount: String) {
-        rep_forks_count.text = getString(R.string.forks_count)
         rep_forks_count_value.text = forksCount
     }
 
