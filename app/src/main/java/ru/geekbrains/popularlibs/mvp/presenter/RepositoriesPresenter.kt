@@ -1,5 +1,7 @@
 package ru.geekbrains.popularlibs.mvp.presenter
 
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.schedulers.Schedulers
 import moxy.InjectViewState
 import moxy.MvpPresenter
 import ru.geekbrains.popularlibs.mvp.model.entity.GithubRepository
@@ -34,18 +36,20 @@ class RepositoriesPresenter(val repositoriesRepo: GithubRepositoriesRepo, val ro
 
         repositoryListPresenter.itemClickListener = { itemView ->
             val repository = repositoryListPresenter.repositories[itemView.pos]
-
-            //Практическое задание (Урок 2)
+            
             router.navigateTo(Screens.RepositoryScreen(repository))
         }
     }
 
     fun loadRepos() {
-        repositoriesRepo.getRepos().let { repos ->
-            repositoryListPresenter.repositories.clear()
-            repositoryListPresenter.repositories.addAll(repos)
-            viewState.updateList()
-        }
+        repositoryListPresenter.repositories.clear()
+        repositoriesRepo.getRepos()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(
+                { repos -> repositoryListPresenter.repositories.addAll(repos) },
+                { viewState.showUpdateError() },
+                { viewState.updateList() })
     }
 
     fun backClicked() : Boolean {
