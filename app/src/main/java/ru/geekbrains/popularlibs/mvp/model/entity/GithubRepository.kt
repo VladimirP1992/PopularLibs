@@ -1,10 +1,12 @@
 package ru.geekbrains.popularlibs.mvp.model.entity
 
-import java.io.Serializable
+import android.os.Parcelable
+import kotlinx.android.parcel.Parcelize
 
 //https://api.github.com/users/googlesamples/repos
+@Parcelize
 data class GithubRepository (
     val id: String,
     val name: String,
     val forksCount: Int
-): Serializable
+): Parcelable
