@@ -9,4 +9,7 @@ interface RepositoriesView : MvpView {
     fun init()
     fun updateList()
     fun showUpdateError()
+
+    fun setUsername(text: String)
+    fun loadAvatar(avatarUrl: String)
 }
