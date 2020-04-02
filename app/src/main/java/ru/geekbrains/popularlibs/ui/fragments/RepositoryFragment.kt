@@ -35,7 +35,7 @@ class RepositoryFragment : MvpAppCompatFragment(), RepositoryView, BackButtonLis
     @ProvidePresenter
     fun providePresenter():RepositoryPresenter{
         val repository = arguments!![ARGS_REPOSITORY] as GithubRepository
-        return RepositoryPresenter(repository, App.instance.getRouter())
+        return RepositoryPresenter(repository, App.instance.router)
     }
 
     override fun setRepoId(id: String) {
