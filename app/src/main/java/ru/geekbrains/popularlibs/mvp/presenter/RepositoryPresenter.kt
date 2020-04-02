@@ -14,7 +14,7 @@ class RepositoryPresenter(val repository: GithubRepository, val router: Router) 
         loadRepo()
     }
 
-    fun loadRepo() {
+    private fun loadRepo() {
         viewState.setRepoId(repository.id)
         viewState.setRepoName(repository.name)
         viewState.setRepoForksCount(repository.forksCount.toString())

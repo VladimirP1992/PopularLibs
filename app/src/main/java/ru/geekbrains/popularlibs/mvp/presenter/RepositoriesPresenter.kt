@@ -1,19 +1,25 @@
 package ru.geekbrains.popularlibs.mvp.presenter
 
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
-import io.reactivex.rxjava3.schedulers.Schedulers
+import io.reactivex.rxjava3.core.Scheduler
 import moxy.InjectViewState
 import moxy.MvpPresenter
 import ru.geekbrains.popularlibs.mvp.model.entity.GithubRepository
 import ru.geekbrains.popularlibs.mvp.model.repo.GithubRepositoriesRepo
+import ru.geekbrains.popularlibs.mvp.model.repo.GithubUsersRepo
 import ru.geekbrains.popularlibs.mvp.presenter.list.IRepositoryListPresenter
 import ru.geekbrains.popularlibs.mvp.view.RepositoriesView
 import ru.geekbrains.popularlibs.mvp.view.list.RepositoryItemView
 import ru.geekbrains.popularlibs.navigation.Screens
 import ru.terrakok.cicerone.Router
+import timber.log.Timber
 
 @InjectViewState
-class RepositoriesPresenter(val repositoriesRepo: GithubRepositoriesRepo, val router: Router) : MvpPresenter<RepositoriesView>() {
+class RepositoriesPresenter(
+    val mainThreadScheduler: Scheduler,
+    val router: Router,
+    val repositoriesRepo: GithubRepositoriesRepo,
+    val usersRepo: GithubUsersRepo
+) : MvpPresenter<RepositoriesView>() {
 
     class RepositoryListPresenter : IRepositoryListPresenter {
         val repositories = mutableListOf<GithubRepository>()
@@ -32,24 +38,37 @@ class RepositoriesPresenter(val repositoriesRepo: GithubRepositoriesRepo, val ro
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
         viewState.init()
-        loadRepos()
+
+        loadUser()
 
         repositoryListPresenter.itemClickListener = { itemView ->
             val repository = repositoryListPresenter.repositories[itemView.pos]
-            
             router.navigateTo(Screens.RepositoryScreen(repository))
         }
     }
 
-    fun loadRepos() {
-        repositoryListPresenter.repositories.clear()
-        repositoriesRepo.getRepos()
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(
-                { repos -> repositoryListPresenter.repositories.addAll(repos) },
-                { viewState.showUpdateError() },
-                { viewState.updateList() })
+    fun loadUser() {
+        usersRepo.getUser("googlesamples")
+            .observeOn(mainThreadScheduler)
+            .subscribe({ user ->
+                viewState.setUsername(user.login)
+                viewState.loadAvatar(user.avatarUrl)
+                getRepos(user.reposUrl)
+            }, {
+                Timber.e(it)
+            })
+    }
+
+    fun getRepos(reposUrl: String) {
+        repositoriesRepo.getRepos(reposUrl)
+            .observeOn(mainThreadScheduler)
+            .subscribe({ repos ->
+                repositoryListPresenter.repositories.clear()
+                repositoryListPresenter.repositories.addAll(repos)
+                viewState.updateList()
+            }, {
+                Timber.e(it)
+            })
     }
 
     fun backClicked() : Boolean {
