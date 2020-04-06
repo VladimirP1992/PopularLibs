@@ -6,8 +6,6 @@ import ru.geekbrains.popularlibs.mvp.model.cache.IUserCache
 import ru.geekbrains.popularlibs.mvp.model.entity.room.db.Database
 import ru.geekbrains.popularlibs.mvp.model.network.NetworkStatus
 
-
-//TODO: Практическое задание 1 - вытащить кэширование в отдельный класс RoomUserCache и внедрить его сюда через интфейс IUserCache
 class GithubUsersRepo(val api: IDataSource, val networkStatus: NetworkStatus, val database: Database, val userCache: IUserCache) {
     fun getUser(username: String) = userCache.getUser(username, api, networkStatus, database).subscribeOn(Schedulers.io())
 }
