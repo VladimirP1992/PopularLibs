@@ -13,6 +13,8 @@ import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
 import ru.geekbrains.popularlibs.R
 import ru.geekbrains.popularlibs.mvp.model.api.ApiHolder
+import ru.geekbrains.popularlibs.mvp.model.entity.room.cache.RoomRepositoriesCache
+import ru.geekbrains.popularlibs.mvp.model.entity.room.cache.RoomUserCache
 import ru.geekbrains.popularlibs.mvp.model.entity.room.db.Database
 import ru.geekbrains.popularlibs.mvp.model.repo.GithubRepositoriesRepo
 import ru.geekbrains.popularlibs.mvp.model.repo.GithubUsersRepo
@@ -46,8 +48,8 @@ class RepositoriesFragment : MvpAppCompatFragment(), RepositoriesView, BackButto
     fun providePresenter() = RepositoriesPresenter(
         AndroidSchedulers.mainThread(),
         App.instance.router,
-        GithubRepositoriesRepo(ApiHolder.api, networkStatus, Database.getInstance()),
-        GithubUsersRepo(ApiHolder.api, networkStatus, Database.getInstance())
+        GithubRepositoriesRepo(ApiHolder.api, networkStatus, Database.getInstance(), RoomRepositoriesCache()),
+        GithubUsersRepo(ApiHolder.api, networkStatus, Database.getInstance(), RoomUserCache())
     )
 
     override fun init() {
