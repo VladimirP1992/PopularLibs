@@ -13,6 +13,7 @@ import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
 import ru.geekbrains.popularlibs.R
 import ru.geekbrains.popularlibs.mvp.model.api.ApiHolder
+import ru.geekbrains.popularlibs.mvp.model.entity.room.db.Database
 import ru.geekbrains.popularlibs.mvp.model.repo.GithubRepositoriesRepo
 import ru.geekbrains.popularlibs.mvp.model.repo.GithubUsersRepo
 import ru.geekbrains.popularlibs.mvp.presenter.RepositoriesPresenter
@@ -21,6 +22,7 @@ import ru.geekbrains.popularlibs.ui.App
 import ru.geekbrains.popularlibs.ui.BackButtonListener
 import ru.geekbrains.popularlibs.ui.adapter.RepositoriesRVAdapter
 import ru.geekbrains.popularlibs.ui.image.GlideImageLoader
+import ru.geekbrains.popularlibs.ui.network.AndroidNetworkStatus
 
 class RepositoriesFragment : MvpAppCompatFragment(), RepositoriesView, BackButtonListener {
 
@@ -35,6 +37,8 @@ class RepositoriesFragment : MvpAppCompatFragment(), RepositoriesView, BackButto
 
     var adapter: RepositoriesRVAdapter? = null
 
+    val networkStatus = AndroidNetworkStatus(App.instance)
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?) =
         View.inflate(context, R.layout.fragment_repositories, null)
 
@@ -42,8 +46,8 @@ class RepositoriesFragment : MvpAppCompatFragment(), RepositoriesView, BackButto
     fun providePresenter() = RepositoriesPresenter(
         AndroidSchedulers.mainThread(),
         App.instance.router,
-        GithubRepositoriesRepo(ApiHolder.api),
-        GithubUsersRepo(ApiHolder.api)
+        GithubRepositoriesRepo(ApiHolder.api, networkStatus, Database.getInstance()),
+        GithubUsersRepo(ApiHolder.api, networkStatus, Database.getInstance())
     )
 
     override fun init() {
