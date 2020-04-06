@@ -39,7 +39,7 @@ class RepositoriesPresenter(
         super.onFirstViewAttach()
         viewState.init()
 
-        loadUser()
+        loadData()
 
         repositoryListPresenter.itemClickListener = { itemView ->
             val repository = repositoryListPresenter.repositories[itemView.pos]
@@ -47,20 +47,14 @@ class RepositoriesPresenter(
         }
     }
 
-    fun loadUser() {
+    fun loadData() {
         usersRepo.getUser("googlesamples")
             .observeOn(mainThreadScheduler)
-            .subscribe({ user ->
+            .flatMap { user ->
                 viewState.setUsername(user.login)
                 viewState.loadAvatar(user.avatarUrl)
-                getRepos(user.reposUrl)
-            }, {
-                Timber.e(it)
-            })
-    }
-
-    fun getRepos(reposUrl: String) {
-        repositoriesRepo.getRepos(reposUrl)
+                return@flatMap repositoriesRepo.getUserRepositories(user)
+            }
             .observeOn(mainThreadScheduler)
             .subscribe({ repos ->
                 repositoryListPresenter.repositories.clear()
