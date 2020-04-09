@@ -1,28 +1,28 @@
 package ru.geekbrains.popularlibs.ui
 
 import android.app.Application
-import ru.geekbrains.popularlibs.mvp.model.entity.room.db.Database
-import ru.terrakok.cicerone.Cicerone
-import ru.terrakok.cicerone.Router
+import ru.geekbrains.popularlibs.di.AppComponent
+import ru.geekbrains.popularlibs.di.DaggerAppComponent
+import ru.geekbrains.popularlibs.di.modules.AppModule
 import timber.log.Timber
 
-//Пока не знаем Dagger
 class App : Application() {
+
     companion object {
         lateinit var instance: App
     }
 
-    val cicerone: Cicerone<Router> by lazy {
-        Cicerone.create()
-    }
+    lateinit var appComponent: AppComponent
+        private set
 
     override fun onCreate() {
         super.onCreate()
         instance = this
         Timber.plant(Timber.DebugTree())
-        Database.create(this)
+
+        appComponent = DaggerAppComponent.builder()
+            .appModule(AppModule(this))
+            .build()
     }
 
-    val navigatorHolder get() = cicerone.navigatorHolder
-    val router get() = cicerone.router
 }
