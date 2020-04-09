@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
@@ -12,12 +13,9 @@ import moxy.MvpAppCompatFragment
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
 import ru.geekbrains.popularlibs.R
-import ru.geekbrains.popularlibs.mvp.model.api.ApiHolder
-import ru.geekbrains.popularlibs.mvp.model.entity.room.cache.RoomRepositoriesCache
-import ru.geekbrains.popularlibs.mvp.model.entity.room.cache.RoomUserCache
+import ru.geekbrains.popularlibs.mvp.model.cache.image.room.RoomImageCache
 import ru.geekbrains.popularlibs.mvp.model.entity.room.db.Database
-import ru.geekbrains.popularlibs.mvp.model.repo.GithubRepositoriesRepo
-import ru.geekbrains.popularlibs.mvp.model.repo.GithubUsersRepo
+import ru.geekbrains.popularlibs.mvp.model.image.IImageLoader
 import ru.geekbrains.popularlibs.mvp.presenter.RepositoriesPresenter
 import ru.geekbrains.popularlibs.mvp.view.RepositoriesView
 import ru.geekbrains.popularlibs.ui.App
@@ -25,6 +23,8 @@ import ru.geekbrains.popularlibs.ui.BackButtonListener
 import ru.geekbrains.popularlibs.ui.adapter.RepositoriesRVAdapter
 import ru.geekbrains.popularlibs.ui.image.GlideImageLoader
 import ru.geekbrains.popularlibs.ui.network.AndroidNetworkStatus
+import java.io.File
+import javax.inject.Inject
 
 class RepositoriesFragment : MvpAppCompatFragment(), RepositoriesView, BackButtonListener {
 
@@ -35,27 +35,30 @@ class RepositoriesFragment : MvpAppCompatFragment(), RepositoriesView, BackButto
     @InjectPresenter
     lateinit var presenter: RepositoriesPresenter
 
-    val imageLoader = GlideImageLoader()
+    @Inject
+    lateinit var imageLoader: IImageLoader<ImageView>
 
     var adapter: RepositoriesRVAdapter? = null
-
-    val networkStatus = AndroidNetworkStatus(App.instance)
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?) =
         View.inflate(context, R.layout.fragment_repositories, null)
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        App.instance.appComponent.inject(this)
+    }
+
     @ProvidePresenter
-    fun providePresenter() = RepositoriesPresenter(
-        AndroidSchedulers.mainThread(),
-        App.instance.router,
-        GithubRepositoriesRepo(ApiHolder.api, networkStatus, Database.getInstance(), RoomRepositoriesCache()),
-        GithubUsersRepo(ApiHolder.api, networkStatus, Database.getInstance(), RoomUserCache())
-    )
+    fun providePresenter() = RepositoriesPresenter(AndroidSchedulers.mainThread()).apply {
+        App.instance.appComponent.inject(this)
+    }
+
 
     override fun init() {
         rv_repos.layoutManager = LinearLayoutManager(context)
         adapter = RepositoriesRVAdapter(presenter.repositoryListPresenter)
         rv_repos.adapter = adapter
+
     }
 
     override fun updateList() {
