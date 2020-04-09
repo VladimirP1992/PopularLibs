@@ -12,14 +12,11 @@ import ru.geekbrains.popularlibs.mvp.view.list.RepositoryItemView
 import ru.geekbrains.popularlibs.navigation.Screens
 import ru.terrakok.cicerone.Router
 import timber.log.Timber
+import javax.inject.Inject
 
 @InjectViewState
-class RepositoriesPresenter(
-    val mainThreadScheduler: Scheduler,
-    val router: Router,
-    val repositoriesRepo: GithubRepositoriesRepo,
-    val usersRepo: GithubUsersRepo
-) : MvpPresenter<RepositoriesView>() {
+class RepositoriesPresenter(val mainThreadScheduler: Scheduler) :
+    MvpPresenter<RepositoriesView>() {
 
     class RepositoryListPresenter : IRepositoryListPresenter {
         val repositories = mutableListOf<GithubRepository>()
@@ -33,12 +30,18 @@ class RepositoriesPresenter(
         }
     }
 
+    @Inject
+    lateinit var usersRepo: GithubUsersRepo
+    @Inject
+    lateinit var repositoriesRepo: GithubRepositoriesRepo
+    @Inject
+    lateinit var router: Router
+
     val repositoryListPresenter = RepositoryListPresenter()
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
         viewState.init()
-
         loadData()
 
         repositoryListPresenter.itemClickListener = { itemView ->
@@ -65,7 +68,7 @@ class RepositoriesPresenter(
             })
     }
 
-    fun backClicked() : Boolean {
+    fun backClicked(): Boolean {
         router.exit()
         return true
     }

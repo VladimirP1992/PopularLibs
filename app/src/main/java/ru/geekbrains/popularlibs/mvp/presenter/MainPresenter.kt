@@ -5,9 +5,13 @@ import moxy.MvpPresenter
 import ru.geekbrains.popularlibs.mvp.view.MainView
 import ru.geekbrains.popularlibs.navigation.Screens
 import ru.terrakok.cicerone.Router
+import javax.inject.Inject
 
 @InjectViewState
-class MainPresenter(val router: Router) : MvpPresenter<MainView>() {
+class MainPresenter() : MvpPresenter<MainView>() {
+
+    @Inject
+    lateinit var router: Router
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
@@ -18,5 +22,4 @@ class MainPresenter(val router: Router) : MvpPresenter<MainView>() {
     fun backClicked() {
         router.exit()
     }
-
 }

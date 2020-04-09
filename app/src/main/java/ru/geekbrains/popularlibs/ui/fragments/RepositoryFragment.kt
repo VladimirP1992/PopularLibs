@@ -18,10 +18,11 @@ import ru.geekbrains.popularlibs.ui.BackButtonListener
 class RepositoryFragment : MvpAppCompatFragment(), RepositoryView, BackButtonListener {
 
     companion object {
-        private const val ARGS_REPOSITORY  = "argsRepository"
+        const val REPOSITORY_KEY = "repository"
+
         fun newInstance(repository: GithubRepository) = RepositoryFragment().apply {
             arguments = Bundle().apply {
-                putParcelable(ARGS_REPOSITORY, repository)
+                putParcelable(REPOSITORY_KEY, repository)
             }
         }
     }
@@ -33,22 +34,25 @@ class RepositoryFragment : MvpAppCompatFragment(), RepositoryView, BackButtonLis
         View.inflate(context, R.layout.fragment_repository, null)
 
     @ProvidePresenter
-    fun providePresenter():RepositoryPresenter{
-        val repository = arguments!![ARGS_REPOSITORY] as GithubRepository
-        return RepositoryPresenter(repository, App.instance.router)
+    fun providePresenter() = RepositoryPresenter(arguments!![REPOSITORY_KEY] as GithubRepository).apply {
+        App.instance.appComponent.inject(this)
     }
 
-    override fun setRepoId(id: String) {
-        rep_id_value.text = id
+    override fun init() {
+
     }
 
-    override fun setRepoName(name: String) {
-        rep_name_value.text = name
+    override fun setId(text: String) {
+        rep_id_value.text = text
     }
 
-    override fun setRepoForksCount(forksCount: String) {
-        rep_forks_count_value.text = forksCount
+    override fun setTitle(text: String) {
+        rep_name_value.text = text
     }
 
-    override fun backClicked(): Boolean = presenter.backClicked()
+    override fun setForksCount(text: String) {
+        rep_forks_count_value.text = text
+    }
+
+    override fun backClicked() = presenter.backClicked()
 }

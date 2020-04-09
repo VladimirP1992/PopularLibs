@@ -6,7 +6,8 @@ import moxy.viewstate.strategy.StateStrategyType
 
 @StateStrategyType(AddToEndSingleStrategy::class)
 interface RepositoryView : MvpView {
-    fun setRepoId(id : String)
-    fun setRepoName(name : String)
-    fun setRepoForksCount(forksCount : String)
+    fun init()
+    fun setId(text: String)
+    fun setTitle(text: String)
+    fun setForksCount(text: String)
 }
